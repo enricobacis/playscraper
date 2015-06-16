@@ -35,8 +35,10 @@ class Downloader():
         doc = self.api.details(pkg).docV2
         vc = doc.details.appDetails.versionCode
         ot = doc.offer[0].offerType
+
+        data = self.api.download(pkg, vc, ot)
         with open(filename, 'wb') as apk:
-            apk.write(self.api.download(pkg, vc, ot))
+            apk.write(data)
 
     def downloadall(self, dbname, outdir, maxsize=None):
         mkdir(outdir)
