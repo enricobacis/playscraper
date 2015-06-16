@@ -58,3 +58,6 @@ target/
 
 # sqlite3 db
 *.db
+
+# ignore scrapy state
+/jobs

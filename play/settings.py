@@ -13,5 +13,8 @@ BOT_NAME = 'play'
 SPIDER_MODULES = ['play.spiders']
 NEWSPIDER_MODULE = 'play.spiders'
 
+LOG_LEVEL = 'INFO'
+JOBDIR = 'jobs/play'
+
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'play (+http://www.yourdomain.com)'
