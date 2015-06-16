@@ -34,9 +34,8 @@ class Downloader():
     def download(self, pkg, filename):
         doc = self.api.details(pkg).docV2
         vc = doc.details.appDetails.versionCode
-        ot = doc.offer[0].offerType
 
-        data = self.api.download(pkg, vc, ot)
+        data = self.api.download(pkg, vc)
         with open(filename, 'wb') as apk:
             apk.write(data)
 
