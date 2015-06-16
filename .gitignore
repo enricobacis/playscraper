@@ -60,4 +60,4 @@ target/
 *.db
 
 # ignore scrapy state
-/jobs
+jobs/
