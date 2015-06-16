@@ -8,10 +8,11 @@ from operator import itemgetter
 import sqlite3
 import re
 
+dbname = 'googleplay.db'
 re_pkg = re.compile(r'id=(.*?)(?:$|&)')
 re_float = re.compile(r'\d+\.\d+')
-
-dbname = 'googleplay.db'
+insertgetter = itemgetter('pkg', 'url', 'title', 'author', 'stars',
+                          'published', 'size', 'downloads', 'version', 'os')
 
 def text(el):
     try: return ''.join(el.css('*::text').extract()).strip()
@@ -27,9 +28,7 @@ def dosql(sql, *args, **kwargs):
             cursor.execute(sql, *args, **kwargs)
 
 def insert_app(item):
-    dosql('INSERT OR IGNORE INTO app VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-          ['"%s"' % item[x] for x in ['pkg', 'url', 'title', 'author',
-           'stars', 'published', 'size', 'downloads', 'version', 'os']])
+    dosql('INSERT OR IGNORE INTO app VALUES (?,?,?,?,?,?,?,?,?,?)', insertgetter(item))
 
 dosql('CREATE TABLE IF NOT EXISTS app(pkg TEXT NOT NULL PRIMARY KEY,'
       'url TEXT NOT NULL, title TEXT, author TEXT, stars TEXT,'
