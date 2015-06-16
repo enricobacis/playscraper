@@ -46,9 +46,9 @@ class Downloader():
             with closing(db.cursor()) as cur:
                 cur.execute(create)
                 for pkg, size in cur.execute(select).fetchall():
-                    print 'Processing %s ... ' % pkg,
+                    print 'Processing %s ...' % pkg,
                     if not sizeallowed(size, maxsize):
-                        print Fore.YELLOW + '[Size too big: (%s) > (%s)]' % (size, maxsize)
+                        print Fore.YELLOW + '[SKIP: too big (%s)]' % size
                         continue
                     path = os.path.join(outdir, pkg + '.apk')
                     try:
@@ -56,7 +56,7 @@ class Downloader():
                     except Exception as e:
                         print Fore.RED + '[ERROR: %s]' % e.message
                     else:
-                        print Fore.GREEN + '[Downloaded to %s]' % path
+                        print Fore.GREEN + '[OK: downloaded to %s]' % path
                         cur.execute(insert, (pkg, path))
                         db.commit()
 
