@@ -23,7 +23,7 @@ def regex(reg, text):
     except: return None
 
 def dosql(sql, *args, **kwargs):
-    with sqlite3.connect(dbname) as db:
+    with sqlite3.connect(dbname, timeout=10) as db:
         with closing(db.cursor()) as cursor:
             cursor.execute(sql, *args, **kwargs)
 

@@ -37,7 +37,7 @@ class Downloader():
 
     def downloadall(self, dbname, outdir, maxsize=None):
         mkdir(outdir)
-        with sqlite3.connect(dbname) as db:
+        with sqlite3.connect(dbname, timeout=10) as db:
             with closing(db.cursor()) as cur:
                 cur.execute(create)
                 for pkg, size in cur.execute(select).fetchall():
