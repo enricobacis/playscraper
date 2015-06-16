@@ -6,9 +6,12 @@ from humanfriendly import parse_size
 from googleplay import GooglePlayAPI
 from contextlib import closing
 from argparse import ArgumentParser
+from colorama import init, Fore
 from config import *
 import sqlite3
 import os
+
+init(autoreset=True)
 
 create = 'CREATE TABLE IF NOT EXISTS download(pkg TEXT PRIMARY KEY, path TEXT)'
 select = 'SELECT pkg,size FROM app WHERE pkg NOT IN (SELECT pkg FROM download)'
@@ -43,15 +46,15 @@ class Downloader():
                 for pkg, size in cur.execute(select).fetchall():
                     print 'Processing %s' % pkg
                     if not sizeallowed(size, maxsize):
-                        print '[Size too big: (%s) > (%s)]' % (size, maxsize)
+                        print Fore.YELLOW + '[Size too big: (%s) > (%s)]' % (size, maxsize)
                         continue
                     path = os.path.join(outdir, pkg + '.apk')
                     try:
                         self.download(pkg, path)
                     except Exception as e:
-                        print '[ERROR: %s]' % e.message
+                        print Fore.RED + '[ERROR: %s]' % e.message
                     else:
-                        print '[Downloaded to %s]' % path
+                        print Fore.GREEN + '[Downloaded to %s]' % path
                         cur.execute(insert, (pkg, path))
                         db.commit()
 
