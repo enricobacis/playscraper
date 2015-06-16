@@ -53,6 +53,7 @@ class Downloader():
                     else:
                         print '[Downloaded to %s]' % path
                         cur.execute(insert, (pkg, path))
+                        db.commit()
 
 if __name__ == '__main__':
     parser = ArgumentParser(description='get apks from Play Store')
