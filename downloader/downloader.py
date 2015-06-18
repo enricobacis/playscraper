@@ -62,7 +62,7 @@ class Downloader():
 if __name__ == '__main__':
     parser = ArgumentParser(description='get apks from Play Store')
     parser.add_argument('DB', help='sqlite3 apps db')
-    parser.add_argument('-o', '--outdir', default='.', help='output directory')
+    parser.add_argument('-o', '--outdir', default='apks', help='output dir')
     parser.add_argument('-m', '--maxsize', default=0, help='max apk size')
     args = parser.parse_args()
     Downloader().downloadall(args.DB, args.outdir, parse_size(args.maxsize))
