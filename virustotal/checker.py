@@ -34,25 +34,35 @@ class Checker():
         with closing(db.cursor()) as cursor:
             selected = cursor.execute(select1).fetchall()
             for pkg, path in selected:
-                print Fore.BLUE + 'Uploading %s for scan ...' % pkg
+                print Fore.BLUE + 'Uploading %s for scan ...' % pkg,
                 path = os.path.abspath(os.path.join(self.basepath, path))
                 if os.path.getsize(path) >= hf.parse_size('32M'):
-                    print Fore.RED + 'File too big for VirusTotal'
                     cursor.execute(insert, (pkg, "", "", -2))
+                    print Fore.RED + 'File too big for VirusTotal'
                     continue
-                id = self.api.scan(path)
-                cursor.execute(insert, (pkg, id, time(), -1))
+                try:
+                    id = self.api.scan(path)
+                    cursor.execute(insert, (pkg, id, time(), -1))
+                    print Fore.GREEN + 'OK'
+                except:
+                    cursor.execute(insert, (pkg, "", "", -2))
+                    print Fore.RED + 'API Error'
                 db.commit()
         return len(selected)
 
     def result(self, db):
         with closing(db.cursor()) as cursor:
-            selected = cursor.execute(select2, [time() - 3600]).fetchall()
+            selected = cursor.execute(select2, [time() - 7200]).fetchall()
             for pkg, id in selected:
-                detected = self.api.get_percent_detected(id)
-                cursor.execute(update, (detected, pkg))
-                print '{} [{} --> {:.0%} virus]'.format(Fore.GREEN
-                    if not detected else Fore.YELLOW, pkg, detected)
+                try:
+                    detected = self.api.get_percent_detected(id)
+                    cursor.execute(update, (detected, pkg))
+                    print '{} [{} --> {:.0%} virus]'.format(Fore.GREEN
+                        if not detected else Fore.YELLOW, pkg, detected)
+                except:
+                    cursor.execute(update, (-3, pkg))
+                    print Fore.GREY + ' [%s API Error]' % pkg
+
         return len(selected)
 
     def createtable(self, db):
