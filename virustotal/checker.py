@@ -53,7 +53,7 @@ class Checker():
 
     def result(self, db):
         with closing(db.cursor()) as cursor:
-            selected = cursor.execute(select2, [time() - 3600]).fetchall()
+            selected = cursor.execute(select2, [time() - 4800]).fetchall()
             for pkg, id in selected:
                 try:
                     detected = self.api.get_percent_detected(id)
