@@ -7,7 +7,7 @@ import requests
 class VirusTotal():
 
     def __init__(self, apikey, limit=4, every=60):
-        self.semaphore = Semaphore(limit)
+        self.semaphore = threading.Semaphore(limit)
         self.apikey = apikey
         self.every = every
 
@@ -22,7 +22,7 @@ class VirusTotal():
 
     def get_report(self, resource):
         with ratelimiter(self.semaphore, self.every):
-            params = {'apikey': apikey, 'resource': resource}
+            params = {'apikey': self.apikey, 'resource': resource}
             url = 'https://www.virustotal.com/vtapi/v2/file/report'
             return requests.get(url, params=params).json()
 
