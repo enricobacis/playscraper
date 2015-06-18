@@ -2,10 +2,10 @@
 SEPARATOR = ";"
 
 LANG            = "en_US" # can be en_US, fr_FR, ...
-ANDROID_ID      = "xxxxxxxxxxxxxxxx"
-GOOGLE_LOGIN    = "xxxxxxxxxxxx@xxxxxxxxx"
-GOOGLE_PASSWORD = "xxxxxxxxxx"
-AUTH_TOKEN      = None # "yyyyyyyyy"
+ANDROID_ID      = None # "xxxxxxxxxxxxxxxx"
+GOOGLE_LOGIN    = None # "yyyyyyyyyyyy@yyyyyyyyy"
+GOOGLE_PASSWORD = None # "zzzzzzzzzz"
+AUTH_TOKEN      = None # "kkkkkkkkk"
 
 # force the user to edit this file
 if any([each == None for each in [ANDROID_ID, GOOGLE_LOGIN, GOOGLE_PASSWORD]]):
