@@ -7,7 +7,7 @@ import requests
 class VirusTotal():
 
     def __init__(self, apikey, limit=4, every=60):
-        self.semaphore = threading.Semaphore(limit)
+        self.semaphore = Semaphore(limit)
         self.apikey = apikey
         self.every = every
 
