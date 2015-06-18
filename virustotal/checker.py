@@ -20,6 +20,7 @@ select1 = 'SELECT pkg, path FROM download WHERE pkg NOT IN (SELECT pkg FROM viru
 select2 = 'SELECT pkg, id FROM virus WHERE detected = -1 AND uploaded < ? LIMIT 1'
 insert = 'INSERT INTO virus VALUES (?, ?, ?, ?)'
 update = 'UPDATE virus SET detected = ? WHERE pkg = ?'
+reschedule = 'UPDATE virus SET uploaded = ?'
 
 def exit():
     raise SystemExit
@@ -52,7 +53,7 @@ class Checker():
 
     def result(self, db):
         with closing(db.cursor()) as cursor:
-            selected = cursor.execute(select2, [time() - 7200]).fetchall()
+            selected = cursor.execute(select2, [time() - 3600]).fetchall()
             for pkg, id in selected:
                 try:
                     detected = self.api.get_percent_detected(id)
@@ -60,8 +61,8 @@ class Checker():
                     print '{} [{} --> {:.0%} virus]'.format(Fore.GREEN
                         if not detected else Fore.YELLOW, pkg, detected)
                 except:
-                    cursor.execute(update, (-3, pkg))
-                    print Fore.GREY + ' [%s API Error]' % pkg
+                    cursor.execute(reschedule, (time(),))
+                    print Fore.GREY + ' [%s API Error -> rescheduling]' % pkg
 
         return len(selected)
 
