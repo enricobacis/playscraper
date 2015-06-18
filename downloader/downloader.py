@@ -45,7 +45,7 @@ class Downloader():
             with closing(db.cursor()) as cur:
                 cur.execute(create)
                 for pkg, size in cur.execute(select).fetchall():
-                    print 'Processing %s ...' % pkg
+                    print 'Processing %s (%s) ...' % (pkg, size)
                     if not sizeallowed(size, maxsize):
                         print Fore.YELLOW + '  [SKIP: too big (%s)]' % size
                         continue
