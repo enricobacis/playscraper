@@ -17,7 +17,7 @@ init(autoreset=True)
 create = ('CREATE TABLE IF NOT EXISTS virus (pkg PRIMARY KEY, id, uploaded, detected)')
 select1 = 'SELECT pkg, path FROM download WHERE pkg NOT IN (SELECT pkg FROM virus) LIMIT 1'
 select2 = 'SELECT pkg, id FROM virus WHERE detected = -1 AND uploaded < ? LIMIT 1'
-insert = 'INSERT INTO virus VALUES (?, ?, ?, -1)'
+insert = 'INSERT INTO virus VALUES (?, ?, ?, ?)'
 update = 'UPDATE virus SET detected = ? WHERE pkg = ?'
 
 def exit():
@@ -37,9 +37,10 @@ class Checker():
                 path = os.path.abspath(os.path.join(self.basepath, path))
                 if os.path.getsize(path) >= 32 * (2 ** 6):
                     print Fore.RED + 'File too big for VirusTotal'
+                    cursor.execute(insert, (pkg, "", "", -2))
                     continue
                 id = self.api.scan()
-                cursor.execute(insert, (pkg, id, time()))
+                cursor.execute(insert, (pkg, id, time(), -1))
                 db.commit()
         return len(selected)
 
