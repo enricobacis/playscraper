@@ -5,10 +5,10 @@ VIRUSTOTAL_APIKEY = None
 from contextlib import closing
 from argparse import ArgumentParser
 from colorama import init, Fore
-from os.path import join
 from config import *
 from time import time
 from vt import VirusTotal
+import os.path
 import sqlite3
 import signal
 
