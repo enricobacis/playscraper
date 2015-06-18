@@ -1,0 +1,6 @@
+VIRUSTOTAL_APIKEY = None # "xxxxxxxxxxxxxxxx"
+
+# force the user to edit this file
+if not VIRUSTOTAL_APIKEY:
+    raise Exception("config.py not updated")
+
