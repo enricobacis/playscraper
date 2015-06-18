@@ -8,6 +8,7 @@ from colorama import init, Fore
 from config import *
 from time import time
 from vt import VirusTotal
+import humanfriendly as hf
 import os.path
 import sqlite3
 import signal
@@ -35,11 +36,11 @@ class Checker():
             for pkg, path in selected:
                 print Fore.BLUE + 'Uploading %s for scan ...' % pkg
                 path = os.path.abspath(os.path.join(self.basepath, path))
-                if os.path.getsize(path) >= 32 * (2 ** 6):
+                if os.path.getsize(path) >= hf.parse_size('32M'):
                     print Fore.RED + 'File too big for VirusTotal'
                     cursor.execute(insert, (pkg, "", "", -2))
                     continue
-                id = self.api.scan()
+                id = self.api.scan(path)
                 cursor.execute(insert, (pkg, id, time(), -1))
                 db.commit()
         return len(selected)
