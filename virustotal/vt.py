@@ -30,3 +30,8 @@ class VirusTotal():
         report = self.get_report(resource)
         return sum(scan['detected'] for av, scan in report['scans'].items())
 
+    def get_percent_detected(self, resource):
+        report = self.get_report(resource)
+        return (sum(scan['detected'] for av, scan in report['scans'].items()) /
+                float(report['scans']))
+
