@@ -34,7 +34,11 @@ class Checker():
             selected = cursor.execute(select1).fetchall()
             for pkg, path in selected:
                 print Fore.BLUE + 'Uploading %s for scan ...' % pkg
-                id = self.api.scan(join(self.basepath, path))
+                path = os.path.abspath(os.path.join(self.basepath, path))
+                if os.path.getsize(path) >= 32 * (2 ** 6)
+                    print Fore.RED + 'File too big for VirusTotal'
+                    continue
+                id = self.api.scan()
                 cursor.execute(insert, (pkg, id, time()))
                 db.commit()
         return len(selected)
