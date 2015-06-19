@@ -63,6 +63,7 @@ class Checker():
                 except:
                     cursor.execute(reschedule, (time(),))
                     print Fore.GREY + ' [%s API Error -> rescheduling]' % pkg
+                db.commit()
 
         return len(selected)
 
