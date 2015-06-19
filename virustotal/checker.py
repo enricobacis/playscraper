@@ -40,6 +40,7 @@ class Checker():
     @contextmanager
     def getdbcursor(self):
         with sqlite3.connect(self.dbname, timeout=10) as db:
+            db.text_factory = str
             with closing(db.cursor()) as cursor:
                 yield db, cursor
             db.commit()
