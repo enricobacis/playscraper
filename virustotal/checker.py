@@ -90,8 +90,9 @@ class Checker():
             for apk in glob(os.path.join(self.basedir, '*.apk')):
                 apk = os.path.basename(apk)
                 pkg = os.path.splitext(apk)[0]
-                cursor.execute('INSERT INTO download VALUES (?, ?)', (pkg, apk))
+                cursor.execute('INSERT OR IGNORE INTO download VALUES (?, ?)', (pkg, apk))
             db.commit()
+        print Fore.CYAN + '[all apks added to download table]'
 
 if __name__ == '__main__':
     signal.signal(signal.SIGINT, exit)
