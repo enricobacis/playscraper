@@ -11,5 +11,5 @@ def virus(db):
             cursor.execute('SELECT detected, count(*) FROM virus GROUP BY detected ORDER BY detected')
             return template('virustotal', title=db, cursor=cursor, refresh=10)
 
-run()
+run(host='0.0.0.0')
 
