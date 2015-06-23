@@ -22,7 +22,7 @@ select1 = 'SELECT pkg, path FROM download WHERE pkg NOT IN (SELECT pkg FROM viru
 select2 = 'SELECT pkg, id FROM virus WHERE detected = -1 AND uploaded < ? LIMIT 1'
 insert = 'INSERT INTO virus VALUES (?, ?, ?, ?)'
 update = 'UPDATE virus SET detected = ? WHERE pkg = ?'
-reschedule = 'UPDATE virus SET uploaded = ?'
+reschedule = 'UPDATE virus SET uploaded = ? WHERE pkg = ?'
 
 def exit():
     raise SystemExit
@@ -75,7 +75,7 @@ class Checker():
                     print '{} [{} --> {:.0%} virus]'.format(Fore.GREEN
                         if not detected else Fore.YELLOW, pkg, detected)
                 except:
-                    cursor.execute(reschedule, (time(),))
+                    cursor.execute(reschedule, (time(), pkg))
                     print Fore.MAGENTA + ' [%s API Error -> rescheduling]' % pkg
                 db.commit()
 
