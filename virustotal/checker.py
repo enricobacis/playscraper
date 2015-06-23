@@ -76,7 +76,7 @@ class Checker():
                         if not detected else Fore.YELLOW, pkg, detected)
                 except:
                     cursor.execute(reschedule, (time(),))
-                    print Fore.GREY + ' [%s API Error -> rescheduling]' % pkg
+                    print Fore.MAGENTA + ' [%s API Error -> rescheduling]' % pkg
                 db.commit()
 
         return len(selected)
