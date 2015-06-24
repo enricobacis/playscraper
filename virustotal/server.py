@@ -11,8 +11,8 @@ def virus(db):
         return 'The database does not exist: "%s"' % db
     with connect(db, timeout=10) as connection:
         with closing(connection.cursor()) as cursor:
-            cursor.execute('SELECT count(*), CAST(0.999 + detected * 10 AS INT) || '0%' AS score'
-                           'FROM virus WHERE detected >= 0 GROUP BY score ORDER BY score')
+            cursor.execute("SELECT count(*), CAST(0.999 + detected * 10 AS INT) || '0%' AS score"
+                           "FROM virus WHERE detected >= 0 GROUP BY score ORDER BY score")
             return template('virustotal', title=db, cursor=cursor, refresh=request.query.refresh)
 
 run(host='0.0.0.0')
