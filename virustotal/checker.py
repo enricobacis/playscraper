@@ -67,7 +67,7 @@ class Checker():
 
     def result(self):
         with self.getdbcursor() as (db, cursor):
-            selected = cursor.execute(select2, [time() - 4800]).fetchall()
+            selected = cursor.execute(select2, [time() - 7200]).fetchall()
             for pkg, id in selected:
                 try:
                     detected = self.api.get_percent_detected(id)
@@ -75,8 +75,8 @@ class Checker():
                     print '{} [{} --> {:.0%} virus]'.format(Fore.GREEN
                         if not detected else Fore.YELLOW, pkg, detected)
                 except:
-                    cursor.execute(reschedule, (time(), pkg))
-                    print Fore.MAGENTA + ' [%s API Error -> rescheduling]' % pkg
+                    cursor.execute(update, (-3, pkg))
+                    print Fore.MAGENTA + ' [%s API Error -> detected set to -3]' % pkg
                 db.commit()
 
         return len(selected)
