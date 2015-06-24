@@ -13,7 +13,7 @@
 <script>
 % import json
 % data = {"chart": {"renderTo": "container"},
-%         "title": {"text": "Virus Scores" + (":%s" if title else "")},
+%         "title": {"text": "Virus Scores" + (": %s" % title if title else "")},
 %         "series": [{"type": "pie", "name": "samples", "data": cursor.fetchall()}]}
 var chart = new Highcharts.Chart({{!json.dumps(data)}});
 </script>
