@@ -75,8 +75,8 @@ class Checker():
                     print '{} [{} --> {:.0%} virus]'.format(Fore.GREEN
                         if not detected else Fore.YELLOW, pkg, detected)
                 except:
-                    cursor.execute(update, (-3, pkg))
-                    print Fore.MAGENTA + ' [%s API Error -> detected set to -3]' % pkg
+                    cursor.execute(reschedule, (time(), pkg))
+                    print Fore.MAGENTA + ' [%s API Error -> rescheduling]' % pkg
                 db.commit()
 
         return len(selected)
