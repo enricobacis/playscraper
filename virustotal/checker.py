@@ -19,7 +19,7 @@ init(autoreset=True)
 create1 = 'CREATE TABLE IF NOT EXISTS virus (pkg PRIMARY KEY, id, uploaded, detected)'
 create2 = 'CREATE TABLE IF NOT EXISTS download (pkg PRIMARY KEY, path TEXT)'
 select1 = 'SELECT pkg, path FROM download WHERE pkg NOT IN (SELECT pkg FROM virus) LIMIT 1'
-select2 = 'SELECT pkg, id FROM virus WHERE detected BETWEEN -3 AND -1 AND uploaded < ? LIMIT 2'
+select2 = 'SELECT pkg, id FROM virus WHERE detected BETWEEN -2 AND -1 AND uploaded < ? LIMIT 2'
 insert = 'INSERT INTO virus VALUES (?, ?, ?, ?)'
 update = 'UPDATE virus SET detected = ? WHERE pkg = ?'
 reschedule = 'UPDATE virus SET uploaded = ?, detected = (detected - 1) WHERE pkg = ?'
