@@ -19,10 +19,10 @@ init(autoreset=True)
 create1 = 'CREATE TABLE IF NOT EXISTS virus (pkg PRIMARY KEY, id, uploaded, detected)'
 create2 = 'CREATE TABLE IF NOT EXISTS download (pkg PRIMARY KEY, path TEXT)'
 select1 = 'SELECT pkg, path FROM download WHERE pkg NOT IN (SELECT pkg FROM virus) LIMIT 1'
-select2 = 'SELECT pkg, id FROM virus WHERE detected = -1 AND uploaded < ? LIMIT 2'
+select2 = 'SELECT pkg, id FROM virus WHERE detected BETWEEN -3 AND -1 AND uploaded < ? LIMIT 2'
 insert = 'INSERT INTO virus VALUES (?, ?, ?, ?)'
 update = 'UPDATE virus SET detected = ? WHERE pkg = ?'
-reschedule = 'UPDATE virus SET uploaded = ? WHERE pkg = ?'
+reschedule = 'UPDATE virus SET uploaded = ?, detected = (detected - 1) WHERE pkg = ?'
 
 def exit():
     raise SystemExit
@@ -52,7 +52,7 @@ class Checker():
                 print Fore.BLUE + 'Uploading %s for scan ...' % pkg,
                 path = os.path.abspath(os.path.join(self.basedir, path))
                 if os.path.getsize(path) >= hf.parse_size('32M'):
-                    cursor.execute(insert, (pkg, "", "", -2))
+                    cursor.execute(insert, (pkg, "file-too-big", "", -100))
                     print Fore.RED + 'File too big for VirusTotal'
                     continue
                 try:
@@ -60,7 +60,7 @@ class Checker():
                     cursor.execute(insert, (pkg, id, time(), -1))
                     print Fore.GREEN + 'OK'
                 except:
-                    cursor.execute(insert, (pkg, "", "", -2))
+                    cursor.execute(insert, (pkg, "api-scan-error", "", -100))
                     print Fore.RED + 'API Error'
                 db.commit()
         return len(selected)
