@@ -1,6 +1,5 @@
-from threading import Semaphore
 from os.path import basename
-from rate import ratelimiter
+from rate import Limiter
 import requests
 
 
@@ -9,13 +8,15 @@ class VirusTotal():
 
     def __init__(self, apikey, limit=4, every=61):
         """Initialize the VirusTotal API limiting the reqs per timeframe."""
-        self.semaphore = Semaphore(limit)
+        self.limiter = Limiter(limit, every)
         self.apikey = apikey
-        self.every = every
+
+    def __del__(self):
+        del self.limiter
 
     def scan(self, path):
         """Upload a file for scanning. It returns the resource ID."""
-        with ratelimiter(self.semaphore, self.every):
+        with Limiter.wait():
             with open(path, 'rb') as f:
                 params = {'apikey': self.apikey}
                 files = {'file': (basename(path), f)}
@@ -25,7 +26,7 @@ class VirusTotal():
 
     def get_report(self, resource):
         """Get the report for a specific resource."""
-        with ratelimiter(self.semaphore, self.every):
+        with Limiter.wait():
             params = {'apikey': self.apikey, 'resource': resource}
             url = 'https://www.virustotal.com/vtapi/v2/file/report'
             return requests.get(url, params=params).json()

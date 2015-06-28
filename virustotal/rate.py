@@ -1,25 +1,36 @@
 from contextlib import contextmanager
 from threading import Timer, Semaphore
 from functools import wraps
+from weakref import WeakSet
+
+class Limiter():
+    def __init__(self, limit, every):
+        self.semaphore = Semaphore(limit)
+        self.timers = WeakSet()
+        self.limit = limit
+        self.every = every
+
+    @contextmanager
+    def wait(self):
+        self.semaphore.acquire()
+        yield
+        timer = Timer(self.every, self.semaphore.release)
+        self.timers.add(timer)
+        timer.start()
+
+    def __del__(self):
+        for timer in self.timers:
+            timer.cancel()
+
 
 def ratelimit(limit, every):
     """Decorator to limit invocations. *limit* calls per *every* seconds."""
     def limitdecorator(fn):
-        semaphore = Semaphore(limit)
+        limiter = Limiter(limit, every)
         @wraps(fn)
         def wrapper(*args, **kwargs):
-            semaphore.acquire()
-            result = fn(*args, **kwargs)
-            Timer(every, semaphore.release).start()
-            return result
+            with limiter.wait():
+                return fn(*args, **kwargs)
         return wrapper
     return limitdecorator
-
-@contextmanager
-def ratelimiter(semaphore, releaseafter):
-    """Acquires the semaphore, executes user part and starts the timer for
-       releasing the semaphore. Use it with with statement."""
-    semaphore.acquire()
-    yield
-    Timer(releaseafter, semaphore.release).start()
 
