@@ -24,11 +24,8 @@ insert = 'INSERT INTO virus VALUES (?, ?, ?, ?)'
 update = 'UPDATE virus SET detected = ? WHERE pkg = ?'
 reschedule = 'UPDATE virus SET uploaded = ?, detected = (detected - 1) WHERE pkg = ?'
 
-def exit():
-    raise SystemExit
 
 class Checker():
-
     def __init__(self, dbname, basedir):
         self.api = VirusTotal(VIRUSTOTAL_APIKEY)
         self.basedir = basedir
@@ -84,7 +81,6 @@ class Checker():
     def checkall(self):
         while any((self.scan(), self.result())): pass
         print 'Everything done for now'
-        exit()
 
     def addtodownload(self):
         with self.getdbcursor() as (db, cursor):
@@ -104,5 +100,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     checker = Checker(args.DB, args.basedir)
     if args.add: checker.addtodownload()
-    checker.checkall()
+    try: checker.checkall()
+    except: print Fore.CYAN + '[STOP REQUEST RECEIVED. PLEASE WAIT...]'
+    finally: del checker
 
