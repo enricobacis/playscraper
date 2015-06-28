@@ -3,8 +3,12 @@ from threading import Timer, Semaphore
 from functools import wraps
 from weakref import WeakSet
 
+
 class Limiter():
+    """Class used to limit the rate of something. See method wait."""
+
     def __init__(self, limit, every):
+        """Initialize the limiter to limit/every requests."""
         self.semaphore = Semaphore(limit)
         self.timers = WeakSet()
         self.limit = limit
@@ -12,6 +16,7 @@ class Limiter():
 
     @contextmanager
     def wait(self):
+        """Block until the rate is compliant. Use with with statement."""
         self.semaphore.acquire()
         yield
         timer = Timer(self.every, self.semaphore.release)
@@ -19,6 +24,7 @@ class Limiter():
         timer.start()
 
     def __del__(self):
+        """Cancel all the active timers."""
         for timer in self.timers:
             timer.cancel()
 
