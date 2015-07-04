@@ -9,23 +9,23 @@ class Limiter():
 
     def __init__(self, limit, every):
         """Initialize the limiter to limit/every requests."""
-        self.semaphore = Semaphore(limit)
-        self.timers = WeakSet()
-        self.limit = limit
-        self.every = every
+        self._semaphore = Semaphore(limit)
+        self._timers = WeakSet()
+        self._limit = limit
+        self._every = every
 
     @contextmanager
     def wait(self):
         """Block until the rate is compliant. Use with with statement."""
-        self.semaphore.acquire()
+        self._semaphore.acquire()
         yield
-        timer = Timer(self.every, self.semaphore.release)
-        self.timers.add(timer)
+        timer = Timer(self._every, self._semaphore.release)
+        self._timers.add(timer)
         timer.start()
 
     def __del__(self):
         """Cancel all the active timers."""
-        for timer in self.timers:
+        for timer in self._timers:
             timer.cancel()
 
 
