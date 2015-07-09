@@ -13,7 +13,7 @@ def virus(db):
         with closing(connection.cursor()) as cursor:
             cursor.execute("SELECT CAST(0.999 + detected * 10 AS INT) || '0% virus' AS score, count(*)"
                            " FROM virus WHERE detected >= 0 GROUP BY score ORDER BY score")
-            return template('virustotal', title=db, cursor=cursor, refresh=request.query.refresh)
+            return template('virustotal', title=db, cursor=cursor)
 
 run(host='0.0.0.0')
 
