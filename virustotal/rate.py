@@ -1,42 +1,31 @@
 from contextlib import contextmanager
 from threading import Timer, Semaphore
 from functools import wraps
-from weakref import WeakSet
 
-
-class Limiter():
-    """Class used to limit the rate of something. See method wait."""
-
-    def __init__(self, limit, every):
-        """Initialize the limiter to limit/every requests."""
-        self._semaphore = Semaphore(limit)
-        self._timers = WeakSet()
-        self._limit = limit
-        self._every = every
-
-    @contextmanager
-    def wait(self):
-        """Block until the rate is compliant. Use with with statement."""
-        self._semaphore.acquire()
-        yield
-        timer = Timer(self._every, self._semaphore.release)
-        self._timers.add(timer)
-        timer.start()
-
-    def __del__(self):
-        """Cancel all the active timers."""
-        for timer in self._timers:
-            timer.cancel()
-
+def __daemonic_timer(delay, fn):
+    """Start a daemon timer that is killed if the program ends"""
+    timer = Timer(delay, fn)
+    timer.setDaemon(True)
+    timer.start()
 
 def ratelimit(limit, every):
     """Decorator to limit invocations. *limit* calls per *every* seconds."""
     def limitdecorator(fn):
-        limiter = Limiter(limit, every)
+        semaphore = Semaphore(limit)
         @wraps(fn)
         def wrapper(*args, **kwargs):
-            with limiter.wait():
-                return fn(*args, **kwargs)
+            semaphore.acquire()
+            result = fn(*args, **kwargs)
+            __daemonic_timer(every, semaphore.release)
+            return result
         return wrapper
     return limitdecorator
+
+@contextmanager
+def ratelimiter(semaphore, releaseafter):
+    """Acquires the semaphore, executes user part and starts the timer for
+       releasing the semaphore. Use it with with statement."""
+    semaphore.acquire()
+    yield
+    __daemonic_timer(releaseafter, semaphore.release)
 
